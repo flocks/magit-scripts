@@ -1,0 +1,5 @@
+* magit-scripts
+
+Collection of (ma)git scripts that I personnaly use.
+
+
