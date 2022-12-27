@@ -34,8 +34,16 @@ Prompt the user for the new version then git commit and git tag."
 			(magit-run-git "tag" "-a" version "-m" version)))))))
 
 
-;; TODO
-(defun magit-scripts-other-branch-from-remote (&optional remote)
+(defun magit-scripts-show-outdated-branches (remote)
+  "In magit-refs buffer display only branches that are not up-to-date
+with their tracked remote branch"
+  (interactive
+   (list (or
+		  (and current-prefix-arg (magit-read-remote "Remote"))
+		  "origin")))
+  (let ((inhibit-read-only t))
+	(goto-char (point-min))
+	(keep-lines (format "<[0-9]+%s" remote))))
   "Equivalent of doing git fetch remote remote-branch:local-branch
 
 It's very useful to be able to be on main branch and without changing branch
