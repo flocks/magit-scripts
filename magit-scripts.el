@@ -44,6 +44,8 @@ with their tracked remote branch"
   (let ((inhibit-read-only t))
 	(goto-char (point-min))
 	(keep-lines (format "<[0-9]+%s" remote))))
+
+(defun magit-scripts-update-branches (branches &optional remote)
   "Equivalent of doing git fetch remote remote-branch:local-branch
 
 It's very useful to be able to be on main branch and without changing branch
@@ -51,6 +53,14 @@ to fetch and merge a remote branch into your local branch.
 
 Works also by selecting multiple branches
 "
-  )
+  (interactive
+   (list (or (magit-region-values 'branch t)
+			 (list (read-string "Branch: ")))
+		 (or
+		  (and current-prefix-arg (magit-read-remote "Remote"))
+		  "origin")))
+  (magit-process-buffer)
+  (dolist (branche branches)
+	(magit-fetch-refspec remote (format "%s:%s" branche branche) nil)))
 
 (provide 'magit-scripts)
