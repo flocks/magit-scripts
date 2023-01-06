@@ -63,4 +63,20 @@ Works also by selecting multiple branches
   (dolist (branche branches)
 	(magit-fetch-refspec remote (format "%s:%s" branche branche) nil)))
 
+(defun magit-scripts-track-branches (branches)
+  "For each remote branche in BRANCHES, create a local branch that
+track the remote branch.
+
+Basically doing git branch --track local origin/local in a loop
+
+"
+  (interactive
+   (list (or (magit-region-values 'branch t)
+			 (list (read-string "Branch: ")))))
+  (magit-process-buffer)
+  (dolist (branche branches)
+	(when-let ((local (cadr (split-string branche "origin/"))))
+	  (magit-git-command (format "git branch --track %s %s" local branche)))))
+
 (provide 'magit-scripts)
+
