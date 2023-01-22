@@ -34,6 +34,36 @@ Prompt the user for the new version then git commit and git tag."
 			(magit-run-git "tag" "-a" version "-m" version)))))))
 
 
+
+(defun magit-scripts--replace-buffer-with-revision (rev)
+  (when-let ((file (buffer-file-name))
+			 (buf (magit-find-file-noselect rev file)))
+	(erase-buffer)
+	(insert
+	 (with-current-buffer buf (buffer-string)))
+	(goto-char (point-min))
+	(save-buffer)))
+
+
+(defun magit-scripts-replace-from-branch ()
+  "Read a branch and replace the current file with the value from
+the branch.
+
+When in dired buffer, perform the action on all marked files."
+  (interactive)
+  (let* ((pseudo-revs '("{worktree}" "{index}"))
+		 (rev (magit-completing-read "Find file from revision"
+									(append pseudo-revs
+											(magit-list-refnames nil t))
+									nil nil nil 'magit-revision-history
+									(or (magit-branch-or-commit-at-point)
+										(magit-get-current-branch)))))
+	(if-let ((files (dired-get-marked-files)))
+		(dolist (file files)
+		  (with-current-buffer (find-file-noselect file)
+			(magit-scripts--replace-buffer-with-revision rev)))
+	  (magit-scripts--replace-buffer-with-revision rev))))
+
 (defun magit-scripts-show-outdated-branches (remote)
   "In magit-refs buffer display only branches that are not up-to-date
 with their tracked remote branch"
