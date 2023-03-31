@@ -108,5 +108,24 @@ Basically doing git branch --track local origin/local in a loop
 	(when-let ((local (cadr (split-string branche "origin/"))))
 	  (magit-git-command (format "git branch --track %s %s" local branche)))))
 
+
+(defun magit-scripts-dired-unstaged-files ()
+  (interactive)
+  (dired (cons "Magit unstaged files" (magit-unstaged-files))))
+
+
+(defun magit-scripts-done-on-this-branch (branch)
+  "Run a git log comparing current branch to BRANCH.
+BRANCH defaults to main and can be overrided when using prefix argument
+
+Useful when I want to check the work that has been done directly on this branch"
+  (interactive
+   (list (or
+		  (and current-prefix-arg (magit-read-branch "Branch"))
+		  "main")))
+
+  (let ((rev (format "%s..%s" branch (magit-get-current-branch))))
+	(magit-log-other (list rev))))
+
 (provide 'magit-scripts)
 
