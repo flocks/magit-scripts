@@ -118,14 +118,15 @@ Basically doing git branch --track local origin/local in a loop
   "Run a git log comparing current branch to BRANCH.
 BRANCH defaults to main and can be overrided when using prefix argument
 
-Useful when I want to check the work that has been done directly on this branch"
+Useful to quickly see the diff between current branch and main"
   (interactive
    (list (or
 		  (and current-prefix-arg (magit-read-branch "Branch"))
 		  "main")))
 
-  (let ((rev (format "%s..%s" branch (magit-get-current-branch))))
-	(magit-log-other (list rev))))
+  (let ((rev (format "%s..%s" branch (magit-get-current-branch)))
+		(args (list "--no-merges")))
+	(magit-log-other (list rev) args)))
 
 (provide 'magit-scripts)
 
